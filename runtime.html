@@ -2,7 +2,7 @@
 <html lang="de">
 <head>
 <meta charset="UTF-8">
-<title>iki1uc · liveBOOT · runtime</title>
+<title>iki1uc · liveBOOT · runtime · COACH</title>
 <style>
   *{margin:0;padding:0;box-sizing:border-box}
   html,body{height:100%;background:#000;color:#c8d8e8;
@@ -27,60 +27,96 @@
   #top b{color:#f0d080}
   #top .right{margin-left:auto;display:flex;gap:12px}
 
-  #main{flex:1;display:grid;grid-template-columns:1fr 1fr 1fr;gap:2px;
-    background:#000;overflow:hidden}
+  #main{flex:1;display:grid;grid-template-columns:1.4fr 1fr 1fr;gap:2px;
+    background:#000;overflow:hidden;min-height:0}
 
-  .panel{background:#0a0a12;color:#c8d8e8;display:flex;flex-direction:column;overflow:hidden}
+  .col{display:flex;flex-direction:column;gap:2px;overflow:hidden;min-height:0}
+  .panel{background:#0a0a12;display:flex;flex-direction:column;overflow:hidden;min-height:0}
   .panel h2{background:#0c1828;color:#5cf0ff;font-size:11px;padding:3px 8px;
-    letter-spacing:1px;font-weight:normal;flex-shrink:0;display:flex;justify-content:space-between}
+    letter-spacing:1px;font-weight:normal;flex-shrink:0;display:flex;
+    justify-content:space-between;align-items:center}
   .panel h2 b{color:#f0d080}
   .body{flex:1;overflow:auto;padding:8px;font-size:12px;line-height:1.5}
   .body::-webkit-scrollbar{width:6px}
   .body::-webkit-scrollbar-thumb{background:#2a3a4a}
 
-  .cli-line{display:flex;gap:6px;padding:1px 0}
-  .cli-line .prompt{color:#0ff}
+  .cli-line{display:flex;gap:6px;padding:1px 0;word-break:break-word}
+  .cli-line .prompt{color:#0ff;flex-shrink:0}
+  .cli-line .txt{flex:1}
   .cli-line.err .txt{color:#f55}
   .cli-line.ok .txt{color:#0f0}
   .cli-line.warn .txt{color:#f0d080}
+  .cli-line.info .txt{color:#5cf0ff}
+  .cli-line.coach .txt{color:#f0a000}
 
   #cliRow{background:#000;border-top:1px solid #0c1828;padding:4px;display:flex;gap:6px}
   #cliRow span{color:#0ff}
   #cli{background:#000;color:#0f0;font-family:inherit;font-size:12px;
     border:none;outline:none;flex:1;caret-color:#0f0}
 
-  /* 7sinn grid */
-  .sinn-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:3px;padding:8px}
-  .sinn{padding:6px 2px;text-align:center;background:#0c1828;border:1px solid #1a2a3a;
-    border-radius:4px;font-size:9px;cursor:pointer;transition:.15s}
+  /* 7sinn */
+  .sinn-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:3px;padding:6px}
+  .sinn{padding:5px 2px;text-align:center;background:#0c1828;border:1px solid #1a2a3a;
+    border-radius:4px;font-size:8px;cursor:pointer;transition:.15s}
   .sinn:hover{border-color:#5cf0ff}
-  .sinn.on{background:#1a3a4a;border-color:#0ff;color:#0ff;box-shadow:0 0 12px rgba(0,255,255,.4)}
-  .sinn .n{font-size:14px;font-weight:bold;display:block;color:#8ab0c0}
+  .sinn.on{background:#1a3a4a;border-color:#0ff;color:#0ff;
+    box-shadow:0 0 12px rgba(0,255,255,.4)}
+  .sinn .n{font-size:12px;font-weight:bold;display:block;color:#8ab0c0}
   .sinn.on .n{color:#0ff}
 
   /* ghost */
-  .ghost-row{display:flex;justify-content:space-between;padding:3px 0;
-    border-bottom:1px dashed #1a2a3a;font-size:11px}
+  .ghost-row{display:flex;justify-content:space-between;padding:2px 0;
+    border-bottom:1px dashed #1a2a3a;font-size:10.5px}
   .ghost-row .k{color:#5a7288}
   .ghost-row .v{color:#b388ff;font-weight:bold}
 
-  /* coach */
-  .coach-item{padding:4px 8px;margin:2px 0;background:#0c1828;border-left:2px solid #f0d080;
-    border-radius:3px;font-size:11px;cursor:pointer}
-  .coach-item:hover{background:#1a2a3a}
+  /* COACH topics */
+  .topics{display:grid;grid-template-columns:repeat(4,1fr);gap:3px;padding:6px}
+  .topic{padding:5px 2px;text-align:center;background:#1a1208;border:1px solid #2a2018;
+    border-radius:4px;font-size:9px;cursor:pointer;transition:.15s;color:#c8b080}
+  .topic:hover{border-color:#f0a000;color:#f0d080}
+  .topic.on{background:#3a2410;border-color:#f0d080;color:#f0d080;
+    box-shadow:0 0 12px rgba(240,208,128,.5)}
+  .topic .n{display:block;font-weight:bold;font-size:11px;color:#8a7a58}
+  .topic.on .n{color:#f0d080}
 
-  /* arg.sync */
-  .sync-bar{height:8px;background:#0c1828;border-radius:2px;overflow:hidden;margin:4px 0}
+  /* Ämter */
+  .amt{background:#0c1828;border-left:2px solid #5cf0ff;border-radius:3px;
+    padding:4px 8px;margin-bottom:3px;font-size:10.5px}
+  .amt .h{color:#5cf0ff;font-weight:bold}
+  .amt .t{color:#5a7288;font-size:9.5px;margin-top:1px}
+  .amt .c{color:#f0d080;font-size:9.5px}
+
+  /* Lösung */
+  .sol-issue{color:#f0d080;font-weight:bold;font-size:12px;
+    padding:4px 0;border-bottom:1px solid #1a2a3a;margin-bottom:4px}
+  .sol-step{padding:2px 0;color:#a8c8d8;font-size:11px}
+  .sol-help{color:#0ff;font-size:11px;padding:1px 0}
+  .sol-res{color:#0f0;font-size:10.5px;padding:1px 0}
+
+  /* Sync */
+  .sync-bar{height:6px;background:#0c1828;border-radius:2px;overflow:hidden;margin:3px 0}
   .sync-bar i{display:block;height:100%;background:linear-gradient(90deg,#0ff,#f0d080);
     transition:width .3s}
-  .sync-row{font-size:11px;padding:2px 0;display:flex;justify-content:space-between}
+  .sync-row{font-size:10.5px;padding:1px 0;display:flex;justify-content:space-between}
   .sync-row .k{color:#5a7288}
   .sync-row .v{color:#0ff}
+
+  /* Sense */
+  .sense{display:flex;gap:8px;align-items:center;padding:6px;background:#0c1828;
+    border-radius:4px;font-size:11px;margin:6px}
+  .sense .dot{width:10px;height:10px;border-radius:50%;background:#333;
+    box-shadow:0 0 8px #333}
+  .sense.fit .dot{background:#0f0;box-shadow:0 0 12px #0f0}
+  .sense.rdy .dot{background:#5cf0ff;box-shadow:0 0 12px #5cf0ff}
+  .sense.err .dot{background:#f55;box-shadow:0 0 12px #f55}
 
   #bottom{height:22px;background:#0c1828;color:#5a7288;display:flex;
     align-items:center;padding:0 12px;font-size:11px;gap:16px;flex-shrink:0;
     border-top:1px solid #1a2a3a}
   #bottom b{color:#f0d080}
+  #bottom .keys{color:#5a7288}
+  #bottom .keys b{color:#5cf0ff}
 </style>
 </head>
 <body>
@@ -101,63 +137,84 @@
 
 <div id="wb">
   <div id="top">
-    <span>◈ <b>iki1uc</b> · liveBOOT · runtime</span>
+    <span>◈ <b>iki1uc</b> · liveBOOT · COACH</span>
     <span>v1.0</span>
     <span class="right">
-      <span>CHIP <b id="chip">0</b></span>
-      <span>FAST <b id="fast">0</b></span>
-      <span>TURBO <b id="turbo">×0</b></span>
+      <span>CHIP <b id="chip">93</b></span>
+      <span>7SINN <b id="sinnCount">0/7</b></span>
       <span>GHOST <b id="ghostState">off</b></span>
+      <span>COACH <b id="coachState">bereit</b></span>
       <span id="clock">--:--:--</span>
     </span>
   </div>
 
   <div id="main">
 
-    <!-- LEFT: CLI -->
-    <div class="panel">
-      <h2><span>◈ CLI</span><span>runtime</span></h2>
-      <div class="body" id="cliOut"></div>
-      <div id="cliRow"><span>1&gt;</span><input id="cli" placeholder="help · ghost · 7sinn · arg.sync" autocomplete="off" autofocus></div>
+    <!-- COL 1: CLI -->
+    <div class="col">
+      <div class="panel" style="flex:1">
+        <h2><span>◈ CLI</span><span>runtime · coach · ghost · 7sinn · arg.sync</span></h2>
+        <div class="body" id="cliOut"></div>
+        <div id="cliRow"><span>1&gt;</span><input id="cli" placeholder="help · coach wohnung · 1-7 · H · R" autocomplete="off" autofocus></div>
+      </div>
     </div>
 
-    <!-- CENTER: 7sinn + ghost -->
-    <div class="panel">
-      <h2><span>◈ 7SINN</span><b id="sinnCount">0 / 7</b></h2>
-      <div class="sinn-grid" id="sinnGrid"></div>
+    <!-- COL 2: 7sinn + ghost + arg.sync -->
+    <div class="col">
+      <div class="panel">
+        <h2><span>◈ 7SINN</span><b id="sinnHdr">0 / 7</b></h2>
+        <div class="sinn-grid" id="sinnGrid"></div>
+      </div>
 
-      <h2 style="margin-top:4px"><span>◈ GHOST</span><b id="ghostStatus">dark</b></h2>
-      <div class="body" id="ghostPanel" style="flex:0 0 auto;padding:8px">
-        <div class="ghost-row"><span class="k">state</span><span class="v" id="gState">DARK</span></div>
-        <div class="ghost-row"><span class="k">line</span><span class="v" id="gLine">present</span></div>
-        <div class="ghost-row"><span class="k">mode</span><span class="v" id="gMode">idle</span></div>
-        <div class="ghost-row"><span class="k">wraith</span><span class="v" id="gWraith">filter off</span></div>
-        <div style="margin-top:6px;font-size:10px;color:#5a7288">
-          <code>ghost on</code> · <code>ghost off</code> · <code>ghost state</code>
+      <div class="panel">
+        <h2><span>◈ GHOST</span><b id="ghostStatus">dark</b></h2>
+        <div class="body" style="flex:0 0 auto;padding:6px">
+          <div class="ghost-row"><span class="k">state</span><span class="v" id="gState">DARK</span></div>
+          <div class="ghost-row"><span class="k">line</span><span class="v" id="gLine">present</span></div>
+          <div class="ghost-row"><span class="k">mode</span><span class="v" id="gMode">idle</span></div>
+          <div class="ghost-row"><span class="k">wraith</span><span class="v" id="gWraith">filter off</span></div>
+        </div>
+      </div>
+
+      <div class="panel">
+        <h2><span>◈ ARG.SYNC</span><b id="syncPct">0%</b></h2>
+        <div class="body" style="flex:0 0 auto;padding:6px">
+          <div class="sync-bar"><i id="syncBar" style="width:0%"></i></div>
+          <div class="sync-row"><span class="k">arg.tmp</span><span class="v" id="syncArg">—</span></div>
+          <div class="sync-row"><span class="k">in.tmp</span><span class="v" id="syncIn">—</span></div>
+          <div class="sync-row"><span class="k">up.tmp</span><span class="v" id="syncUp">—</span></div>
+          <div class="sync-row"><span class="k">fit.tmp</span><span class="v" id="syncFit">—</span></div>
         </div>
       </div>
     </div>
 
-    <!-- RIGHT: COACH + arg.sync -->
-    <div class="panel">
-      <h2><span>◈ COACH</span><b id="coachMode">idle</b></h2>
-      <div class="body" id="coachPanel" style="flex:1;padding:6px">
-        <div class="coach-item" data-cmd="coach routing">routing</div>
-        <div class="coach-item" data-cmd="coach keyboard">keyboard</div>
-        <div class="coach-item" data-cmd="coach struktur">struktur</div>
-        <div class="coach-item" data-cmd="coach kernel">kernel</div>
-        <div class="coach-item" data-cmd="coach core">core</div>
+    <!-- COL 3: COACH -->
+    <div class="col">
+      <div class="panel">
+        <h2><span>◈ COACH · THEMEN</span><b id="coachMode">bereit</b></h2>
+        <div class="topics" id="topicGrid"></div>
+        <div class="sense" id="senseBox">
+          <span class="dot"></span>
+          <span class="lbl" id="senseLbl">rdy · Bereit</span>
+        </div>
       </div>
 
-      <h2><span>◈ ARG.SYNC</span><b id="syncPct">0%</b></h2>
-      <div class="body" style="flex:0 0 auto;padding:8px">
-        <div class="sync-bar"><i id="syncBar" style="width:0%"></i></div>
-        <div class="sync-row"><span class="k">arg.tmp</span><span class="v" id="syncArg">—</span></div>
-        <div class="sync-row"><span class="k">in.tmp</span><span class="v" id="syncIn">—</span></div>
-        <div class="sync-row"><span class="k">up.tmp</span><span class="v" id="syncUp">—</span></div>
-        <div class="sync-row"><span class="k">fit.tmp</span><span class="v" id="syncFit">—</span></div>
-        <div style="margin-top:6px;font-size:10px;color:#5a7288">
-          <code>arg.sync</code> · <code>arg.sync all</code> · <code>arg.sync stop</code>
+      <div class="panel" style="flex:1">
+        <h2><span>◈ LÖSUNG</span><b id="solBadge">—</b></h2>
+        <div class="body" id="solBox">
+          <div style="color:#5a7288;font-size:11px">
+            Wähle ein Thema (1–7) oder tippe:<br>
+            <code>coach wohnung zu teuer</code><br>
+            <code>coach arbeit kündigung</code><br>
+            <code>coach finanzen schulden</code>
+          </div>
+        </div>
+      </div>
+
+      <div class="panel">
+        <h2><span>◈ ÄMTER</span><b id="amtCount">0</b></h2>
+        <div class="body" style="flex:0 0 auto;max-height:180px" id="amtBox">
+          <div style="color:#5a7288;font-size:11px">— keine aktiv —</div>
         </div>
       </div>
     </div>
@@ -166,30 +223,200 @@
 
   <div id="bottom">
     <span>🖐 ready</span>
-    <span id="sysmsg">type <b>help</b></span>
-    <span style="margin-left:auto">↑↓ history · Tab autocomplete</span>
+    <span class="keys">Tasten <b>1-7</b> · <b>H</b>=help · <b>R</b>=reset · <b>Esc</b>=CLI frei · <b>↑↓</b>=history</span>
+    <span style="margin-left:auto" id="sysmsg">type <b>help</b></span>
   </div>
 </div>
 
 <script>
 "use strict";
-
 /* ═══════════════════════════════════════════════════════════════
-   iki1uc · liveBOOT · runtime
-   help · ghost · 7sinn · arg.sync · coach
+   iki1uc · liveBOOT · runtime · COACH
+   CLOSED · NO-CLONE · BUSINESS · © iki1uc wieimmer
    ═══════════════════════════════════════════════════════════════ */
 
-const R = {
-  booted: false,
-  ghost: { on: false, state: "DARK", line: "present", mode: "idle", wraith: false },
-  sinn: new Array(7).fill(false),
-  argSync: { running: false, timer: null, progress: 0, files: { arg: "—", in: "—", up: "—", fit: "—" } },
-  coach: { mode: "idle" },
-  history: [],
-  histIdx: -1,
+/* ─── COACH · Humanistischer Lebens-Agent ─────────────────── */
+const COACH = {
+  status: "bereit",
+  focus: null,
+  solution: null,
+
+  areas: {
+    wohnen: {
+      label: "🏠 Wohnen",
+      issues: ["miete zu hoch","miete","wohnungssuche","schimmel","kündigung","umzug","wohnung"],
+      help: ["Mietberatung","Wohnungsamt","Sozialhilfe","Mieterverein"]
+    },
+    arbeit: {
+      label: "💼 Arbeit & Job",
+      issues: ["arbeitslosigkeit","arbeitslos","bewerbung","kündigung","mobbing","überforderung","arbeit","job","chef"],
+      help: ["Arbeitsamt","Jobcenter","Bewerbungscoaching","Rechtsberatung"]
+    },
+    gesundheit: {
+      label: "❤️ Gesundheit",
+      issues: ["krankheit","krank","psychische belastung","sucht","suchthilfe","pflege","krankenkasse","gesundheit"],
+      help: ["Krankenkasse","Sozialpsychiatrie","Suchtberatung","Pflegestützpunkt"]
+    },
+    finanzen: {
+      label: "💰 Finanzen",
+      issues: ["schulden","alg","bürgergeld","steuern","kredite","finanzen","geld"],
+      help: ["Schuldnerberatung","Jobcenter","Finanzamt","Verbraucherzentrale"]
+    },
+    familie: {
+      label: "👨‍👩‍👧 Familie & Soziales",
+      issues: ["kinderbetreuung","sorgerecht","gewalt","trennung","altersvorsorge","familie","kinder"],
+      help: ["Jugendamt","Familienberatung","Hilfetelefon","Sozialamt"]
+    },
+    behoerden: {
+      label: "🏛️ Behörden",
+      issues: ["behörde","behörden","amt","antrag","formular","termin","ausländerbehörde","aufenthalt"],
+      help: ["Bürgeramt","Ausländerbehörde","Sozialamt","Bürgertelefon 115"]
+    },
+    // Jobcenter + Schulden als Alias-Themen für UI 1-7
+    jobcenter: {
+      label: "🏛️ Jobcenter",
+      issues: ["jobcenter","alg i","alg ii","eingliederung","vermittlung"],
+      help: ["Jobcenter Terminvereinbarung","Arbeitsamt","Sozialberatung"]
+    }
+  },
+
+  aemter: {
+    jobcenter: { label:"🏛️ Jobcenter", contact:"Terminvereinbarung", tasks:["ALG II","Bürgergeld","Eingliederung"] },
+    arbeitsamt: { label:"🏛️ Arbeitsamt", contact:"Online-Portal", tasks:["Arbeitslosengeld","Weiterbildung","Vermittlung"] },
+    wohnungsamt: { label:"🏛️ Wohnungsamt", contact:"Stadtverwaltung", tasks:["Wohnberechtigungsschein","Sozialwohnung"] },
+    jugendamt: { label:"🏛️ Jugendamt", contact:"Telefon + Beratung", tasks:["Kinderbetreuung","Sorgerecht","Hilfe"] },
+    sozialamt: { label:"🏛️ Sozialamt", contact:"Persönlich oder Online", tasks:["Sozialhilfe","Grundsicherung"] },
+    gesundheitsamt: { label:"🏛️ Gesundheitsamt", contact:"Termin", tasks:["Impfung","Gesundheitszeugnis"] },
+    finanzamt: { label:"🏛️ Finanzamt", contact:"Online + Telefon", tasks:["Steuererklärung","Steuer-ID"] },
+    auslaenderbehoerde: { label:"🏛️ Ausländerbehörde", contact:"Termin", tasks:["Aufenthaltstitel","Einbürgerung"] },
+    rentenversicherung: { label:"🏛️ Rentenversicherung", contact:"Online + Telefon", tasks:["Rentenantrag","Kontenklärung"] }
+  },
+
+  // 7 UI-Themen → interner Bereich
+  topics: [
+    { n:1, key:"jobcenter",  label:"Jobcenter", folder:"Arbeit" },
+    { n:2, key:"wohnen",     label:"Wohnung",   folder:"Wohnen" },
+    { n:3, key:"arbeit",     label:"Arbeit",    folder:"Arbeit" },
+    { n:4, key:"gesundheit", label:"Gesundheit",folder:"Persönlichkeit" },
+    { n:5, key:"familie",    label:"Familie",   folder:"Persönlichkeit" },
+    { n:6, key:"finanzen",   label:"Schulden",  folder:"Wohnen" },
+    { n:7, key:"behoerden",  label:"Behörden",  folder:"Mobilität" }
+  ],
+
+  solve(problem, forcedArea) {
+    const match = forcedArea
+      ? { area: forcedArea, issue: this.areas[forcedArea].issues[0], help: this.areas[forcedArea].help }
+      : this.matchProblem(problem);
+
+    if (!match) return this.fallback(problem);
+
+    const solution = {
+      area: match.area,
+      issue: match.issue,
+      help: match.help,
+      aemter: this.findAemter(match.area),
+      steps: this.generateSteps(match),
+      resources: this.findResources(match)
+    };
+
+    this.solution = solution;
+    this.focus = match.area;
+    return solution;
+  },
+
+  matchProblem(input) {
+    const lower = (input || "").toLowerCase();
+    if (!lower) return null;
+    // längste Treffer zuerst (spezifischer)
+    let best = null, bestLen = 0;
+    for (const [key, area] of Object.entries(this.areas)) {
+      for (const issue of area.issues) {
+        if (lower.includes(issue) && issue.length > bestLen) {
+          best = { area: key, issue, help: area.help };
+          bestLen = issue.length;
+        }
+      }
+    }
+    return best;
+  },
+
+  findAemter(areaKey) {
+    const map = {
+      wohnen:      ["wohnungsamt","sozialamt"],
+      arbeit:      ["jobcenter","arbeitsamt"],
+      gesundheit:  ["gesundheitsamt","rentenversicherung"],
+      finanzen:    ["finanzamt","jobcenter"],
+      familie:     ["jugendamt","sozialamt"],
+      behoerden:   ["auslaenderbehoerde","sozialamt","finanzamt"],
+      jobcenter:   ["jobcenter","arbeitsamt"]
+    };
+    const keys = map[areaKey] || [];
+    return keys.map(k => this.aemter[k] ? { key:k, ...this.aemter[k] } : null).filter(Boolean);
+  },
+
+  generateSteps(match) {
+    return [
+      `Erste Anlaufstelle: ${match.help[0]}`,
+      "Unterlagen vorbereiten: Personalausweis, Nachweise",
+      "Termin vereinbaren (Telefon oder Online)",
+      "Beratung wahrnehmen, Lösung erarbeiten",
+      "Bei Bedarf: Folge-Termin oder Antrag stellen"
+    ];
+  },
+
+  findResources(match) {
+    return {
+      hotline: "0800 123 4567 (kostenlos)",
+      online:  `www.${match.area}-hilfe.de`,
+      vorort:  `Nächste Beratungsstelle für ${match.area}`,
+      notfall: "Bei akuter Krise: 112 oder 110"
+    };
+  },
+
+  fallback(input) {
+    return {
+      status: "🔍 unklar",
+      message: "Problem nicht eindeutig erkannt. Bitte genauer beschreiben.",
+      help: "Sage z.B. 'wohnung', 'arbeit', 'gesundheit', 'schulden', 'familie', 'behörden'",
+      aemter: [],
+      steps: ["Problem klar beschreiben","Bereich wählen","Hilfe holen"]
+    };
+  },
+
+  sense() {
+    const states = {
+      ghost: "Problem nicht erkannt",
+      help:  "Hilfe wird benötigt",
+      error: "Problem dringend",
+      miss:  "Information fehlt",
+      fit:   "Lösung in Arbeit",
+      fin:   "Problem gelöst",
+      rdy:   "Bereit für nächste Hilfe"
+    };
+    const key = this.solution ? "fit" : "rdy";
+    return { state: key, description: states[key] };
+  }
 };
 
-/* ─── LOG ───────────────────────────────────────────────────── */
+/* ─── LEBENS-ORDNER (4 DIN-A4) ─────────────────────────────── */
+const LEBENS_ORDNER = {
+  "Mobilität":     ["Auto","Fahrrad","ÖPNV","Führerschein","Reisen","Pendeln","Flex","Notfall"],
+  "Wohnen":        ["Miete","Wohnung","Haus","Eigentum","Haushalt","Nachbarn","Umzug","Energie"],
+  "Arbeit":        ["Job","Arbeitslos","Jobwechsel","Weiterbildung","Arbeitszeiten","Team","Chef","Geld"],
+  "Persönlichkeit":["Interessen","Gesundheit","Finanzen","Freizeit","Ziele","Stress","Soziales","Digitales"]
+};
+
+/* ─── RUNTIME STATE ────────────────────────────────────────── */
+const R = {
+  booted: false,
+  ghost: { on:false, state:"DARK", line:"present", mode:"idle", wraith:false },
+  sinn: new Array(7).fill(false),
+  argSync: { running:false, progress:0, files:{ arg:"—", in:"—", up:"—", fit:"—" } },
+  coach: { activeArea:null, lastSolution:null },
+  history: [], histIdx: -1,
+};
+
+/* ─── LOG ──────────────────────────────────────────────────── */
 function log(msg, cls = "") {
   const out = document.getElementById("cliOut");
   const t = new Date().toLocaleTimeString("de-DE");
@@ -198,12 +425,11 @@ function log(msg, cls = "") {
   div.innerHTML = `<span class="prompt">${t}</span><span class="txt">${msg}</span>`;
   out.appendChild(div);
   out.scrollTop = out.scrollHeight;
-  while (out.children.length > 300) out.removeChild(out.firstChild);
+  while (out.children.length > 400) out.removeChild(out.firstChild);
 }
-
 const sleep = (ms) => new Promise(r => setTimeout(r, ms));
 
-/* ─── KICKSTART ─────────────────────────────────────────────── */
+/* ─── KICKSTART ────────────────────────────────────────────── */
 async function kickstart() {
   const boot = document.getElementById("boot");
   const flash = boot.querySelector(".flash");
@@ -213,65 +439,61 @@ async function kickstart() {
   flash.style.opacity = "1"; await sleep(80);
   flash.style.opacity = "0";
   boot.classList.add("gray"); await sleep(200);
-
-  msg.textContent = "KICKSTART 1.3"; msg.style.opacity = "1"; await sleep(600);
-  msg.style.opacity = "0"; hand.style.opacity = "1"; await sleep(500);
-
+  msg.textContent = "KICKSTART 1.3"; msg.style.opacity = "1"; await sleep(500);
+  msg.style.opacity = "0"; hand.style.opacity = "1"; await sleep(400);
   boot.classList.remove("gray"); boot.classList.add("blue");
-  msg.textContent = "RUNTIME"; msg.style.opacity = "1"; hand.style.opacity = "0";
+  msg.textContent = "RUNTIME · COACH"; msg.style.opacity = "1"; hand.style.opacity = "0";
   await sleep(400);
 
   boot.style.display = "none";
   document.getElementById("wb").style.display = "flex";
 
-  document.getElementById("chip").textContent = "93";
-  document.getElementById("fast").textContent = "—";
-  document.getElementById("turbo").textContent = "×" + Math.max(2, Math.min(8, navigator.hardwareConcurrency || 4));
-
-  build7sinn();
+  buildSinn();
+  buildTopics();
   updateGhostUI();
   updateSyncUI();
+  updateSense();
 
   R.booted = true;
   log("◈ runtime ready", "ok");
-  log("🖐 tippe 'help'", "ok");
+  log("◈ COACH · Humanistischer Lebens-Agent", "coach");
+  log("CLOSED · NO-CLONE · BUSINESS · © iki1uc wieimmer", "warn");
+  log("🖐 tippe 'help' für alle befehle", "ok");
 }
 
-/* ─── 7SINN ─────────────────────────────────────────────────── */
-const SINN_NAMES = ["sehen", "hören", "riechen", "schmecken", "fühlen", "denken", "ahnen"];
-
-function build7sinn() {
+/* ─── 7SINN ────────────────────────────────────────────────── */
+const SINN_NAMES = ["sehen","hören","riechen","schmecken","fühlen","denken","ahnen"];
+function buildSinn() {
   const el = document.getElementById("sinnGrid");
   el.innerHTML = "";
-  SINN_NAMES.forEach((name, i) => {
+  SINN_NAMES.forEach((name,i) => {
     const d = document.createElement("div");
     d.className = "sinn";
     d.dataset.i = i;
-    d.innerHTML = `<span class="n">${i + 1}</span>${name}`;
+    d.innerHTML = `<span class="n">${i+1}</span>${name}`;
     d.onclick = () => toggleSinn(i);
     el.appendChild(d);
   });
 }
-
 function toggleSinn(i) {
   R.sinn[i] = !R.sinn[i];
   const el = document.querySelector(`.sinn[data-i="${i}"]`);
   if (el) el.classList.toggle("on", R.sinn[i]);
-  const count = R.sinn.filter(Boolean).length;
-  document.getElementById("sinnCount").textContent = `${count} / 7`;
-  log(`7sinn · ${SINN_NAMES[i]} ${R.sinn[i] ? "ON" : "OFF"}`, R.sinn[i] ? "ok" : "warn");
+  const c = R.sinn.filter(Boolean).length;
+  document.getElementById("sinnHdr").textContent = `${c} / 7`;
+  document.getElementById("sinnCount").textContent = `${c}/7`;
+  log(`7sinn · ${SINN_NAMES[i]} ${R.sinn[i]?"ON":"OFF"}`, R.sinn[i]?"ok":"warn");
 }
-
 function sinnAll(on) {
   R.sinn = new Array(7).fill(!!on);
-  document.querySelectorAll(".sinn").forEach((el, i) => {
-    el.classList.toggle("on", R.sinn[i]);
-  });
-  document.getElementById("sinnCount").textContent = `${on ? 7 : 0} / 7`;
-  log(`7sinn · alle ${on ? "an" : "aus"}`, on ? "ok" : "warn");
+  document.querySelectorAll(".sinn").forEach((el,i)=>el.classList.toggle("on",R.sinn[i]));
+  const c = on ? 7 : 0;
+  document.getElementById("sinnHdr").textContent = `${c} / 7`;
+  document.getElementById("sinnCount").textContent = `${c}/7`;
+  log(`7sinn · alle ${on?"an":"aus"}`, on?"ok":"warn");
 }
 
-/* ─── GHOST ─────────────────────────────────────────────────── */
+/* ─── GHOST ────────────────────────────────────────────────── */
 function updateGhostUI() {
   document.getElementById("ghostState").textContent = R.ghost.on ? "on" : "off";
   document.getElementById("ghostStatus").textContent = R.ghost.state.toLowerCase();
@@ -280,112 +502,205 @@ function updateGhostUI() {
   document.getElementById("gMode").textContent = R.ghost.mode;
   document.getElementById("gWraith").textContent = R.ghost.wraith ? "filter on" : "filter off";
 }
-
 function ghostSet(on) {
   R.ghost.on = !!on;
   R.ghost.state = on ? "DARK-PRESENT" : "DARK";
   R.ghost.mode = on ? "ghost-lead" : "idle";
   updateGhostUI();
-  log(`👻 ghost ${on ? "on" : "off"} · state=${R.ghost.state}`, on ? "ok" : "warn");
+  log(`👻 ghost ${on?"on":"off"} · state=${R.ghost.state}`, on?"ok":"warn");
 }
 
-/* ─── ARG.SYNC ──────────────────────────────────────────────── */
+/* ─── ARG.SYNC ─────────────────────────────────────────────── */
 function updateSyncUI() {
   const pct = Math.round(R.argSync.progress * 100);
   document.getElementById("syncBar").style.width = pct + "%";
   document.getElementById("syncPct").textContent = pct + "%";
-  for (const [k, v] of Object.entries(R.argSync.files)) {
+  for (const [k,v] of Object.entries(R.argSync.files)) {
     const el = document.getElementById("sync" + k.charAt(0).toUpperCase() + k.slice(1));
     if (el) el.textContent = v;
   }
 }
-
 async function argSync(all = false) {
-  if (R.argSync.running) { log("⚠ arg.sync läuft bereits", "warn"); return; }
+  if (R.argSync.running) { log("⚠ arg.sync läuft", "warn"); return; }
   R.argSync.running = true;
   R.argSync.progress = 0;
   updateSyncUI();
-
-  const steps = all
-    ? ["arg", "in", "up", "fit"]
-    : ["arg", "in"];
-  const total = steps.length;
-
-  log(`◈ arg.sync · ${total} schritte`, "ok");
-
-  for (let i = 0; i < steps.length; i++) {
+  const steps = all ? ["arg","in","up","fit"] : ["arg","in"];
+  log(`◈ arg.sync · ${steps.length} schritte`, "ok");
+  for (let i=0; i<steps.length; i++) {
     const f = steps[i];
-    const file = `${f}.tmp`;
-    R.argSync.files[f] = "…";
-    updateSyncUI();
-    log(`  ⟳ ${file}`, "");
-    await sleep(500);
-    const size = Math.floor(Math.random() * 200) + 40;
+    R.argSync.files[f] = "…"; updateSyncUI();
+    log(`  ⟳ ${f}.tmp`, "");
+    await sleep(450);
+    const size = Math.floor(Math.random()*200)+40;
     R.argSync.files[f] = `${size}B · ok`;
-    R.argSync.progress = (i + 1) / total;
+    R.argSync.progress = (i+1)/steps.length;
     updateSyncUI();
-    log(`  ✓ ${file} · ${size}B`, "ok");
+    log(`  ✓ ${f}.tmp · ${size}B`, "ok");
   }
-
   R.argSync.running = false;
-  log(`◈ arg.sync complete · ${Math.round(R.argSync.progress * 100)}%`, "ok");
+  log("◈ arg.sync complete", "ok");
 }
 
-function argSyncStop() {
-  R.argSync.running = false;
-  R.argSync.progress = 0;
-  R.argSync.files = { arg: "—", in: "—", up: "—", fit: "—" };
-  updateSyncUI();
-  log("⟲ arg.sync gestoppt", "warn");
+/* ─── COACH · topics + UI ──────────────────────────────────── */
+function buildTopics() {
+  const el = document.getElementById("topicGrid");
+  el.innerHTML = "";
+  COACH.topics.forEach(t => {
+    const d = document.createElement("div");
+    d.className = "topic";
+    d.dataset.key = t.key;
+    d.innerHTML = `<span class="n">${t.n}</span>${t.label}`;
+    d.onclick = () => runCoachArea(t.key);
+    el.appendChild(d);
+  });
+}
+function updateSense() {
+  const s = COACH.sense();
+  const box = document.getElementById("senseBox");
+  box.className = "sense " + s.state;
+  document.getElementById("senseLbl").textContent = `${s.state} · ${s.description}`;
+  document.getElementById("coachState").textContent = s.state;
 }
 
-/* ─── COACH ─────────────────────────────────────────────────── */
-const COACH_DOCS = {
-  routing:    "COACH-Routing.md    · achsen-routing · in→arg→up→fit",
-  keyboard:   "COACH-Tastatur.md   · tasten-mapping · 1..9 + shift-kombis",
-  struktur:   "COACH-Ordnerstruktur.md · schachtelung · coach/ → kern/ → sync/",
-  kernel:     "COACH-KERNEL.js     · kern-funktionen · init/step/lead",
-  core:       "COACH.core          · zustand + identität",
-};
+function runCoachArea(areaKey) {
+  const area = COACH.areas[areaKey];
+  if (!area) { log(`⚠ coach · unbekannt: ${areaKey}`, "err"); return; }
 
-function coachShow(key) {
-  if (!COACH_DOCS[key]) {
-    log(`⚠ coach · unbekannt: ${key}`, "err");
+  document.querySelectorAll(".topic").forEach(el =>
+    el.classList.toggle("on", el.dataset.key === areaKey)
+  );
+
+  const sol = COACH.solve(null, areaKey);
+  R.coach.activeArea = areaKey;
+  R.coach.lastSolution = sol;
+
+  // Themen-Ordner aus COACH.topics lesen
+  const topic = COACH.topics.find(t => t.key === areaKey);
+  const folder = topic ? topic.folder : "—";
+  document.getElementById("coachMode").textContent = area.label.replace(/^[^\s]+\s/, "");
+
+  // Lösung rendern
+  const box = document.getElementById("solBox");
+  let html = `<div class="sol-issue">${area.label} · ${sol.issue || "—"}</div>`;
+  html += `<div style="color:#5cf0ff;font-size:11px;margin-bottom:4px">Ordner: ${folder}</div>`;
+  html += `<div style="color:#a8c8d8;font-weight:bold;margin-top:6px">Schritte</div>`;
+  sol.steps.forEach(st => html += `<div class="sol-step">→ ${st}</div>`);
+  html += `<div style="color:#a8c8d8;font-weight:bold;margin-top:8px">Hilfe</div>`;
+  sol.help.forEach(h => html += `<div class="sol-help">· ${h}</div>`);
+  if (sol.resources) {
+    html += `<div style="color:#a8c8d8;font-weight:bold;margin-top:8px">Kontakt</div>`;
+    html += `<div class="sol-res">☎ ${sol.resources.hotline}</div>`;
+    html += `<div class="sol-res">🌐 ${sol.resources.online}</div>`;
+    html += `<div class="sol-res">⚠ ${sol.resources.notfall}</div>`;
+  }
+  box.innerHTML = html;
+
+  // Ämter rendern
+  const amtBox = document.getElementById("amtBox");
+  if (sol.aemter && sol.aemter.length) {
+    amtBox.innerHTML = sol.aemter.map(a => `
+      <div class="amt">
+        <div class="h">${a.label}</div>
+        <div class="t">${a.tasks.join(" · ")}</div>
+        <div class="c">↳ ${a.contact}</div>
+      </div>
+    `).join("");
+    document.getElementById("amtCount").textContent = sol.aemter.length;
+  } else {
+    amtBox.innerHTML = `<div style="color:#5a7288;font-size:11px">— keine aktiv —</div>`;
+    document.getElementById("amtCount").textContent = "0";
+  }
+  document.getElementById("solBadge").textContent = areaKey;
+
+  updateSense();
+  log(`◈ coach · ${area.label} · ${sol.steps.length} schritte · ${sol.aemter.length} ämter`, "coach");
+}
+
+function runCoachText(text) {
+  const sol = COACH.solve(text);
+  R.coach.lastSolution = sol;
+
+  if (sol.status === "🔍 unklar") {
+    log(`◈ coach · ${sol.message}`, "warn");
+    log(`  ${sol.help}`, "");
     return;
   }
-  R.coach.mode = key;
-  document.getElementById("coachMode").textContent = key;
-  log(`◈ coach · ${COACH_DOCS[key]}`, "ok");
+
+  const area = COACH.areas[sol.area];
+  document.querySelectorAll(".topic").forEach(el =>
+    el.classList.toggle("on", el.dataset.key === sol.area)
+  );
+  document.getElementById("coachMode").textContent =
+    (area?.label || sol.area).replace(/^[^\s]+\s/, "");
+
+  const box = document.getElementById("solBox");
+  let html = `<div class="sol-issue">${area?.label || sol.area} · "${sol.issue}"</div>`;
+  html += `<div style="color:#a8c8d8;font-weight:bold">Schritte</div>`;
+  sol.steps.forEach(st => html += `<div class="sol-step">→ ${st}</div>`);
+  html += `<div style="color:#a8c8d8;font-weight:bold;margin-top:8px">Hilfe</div>`;
+  sol.help.forEach(h => html += `<div class="sol-help">· ${h}</div>`);
+  if (sol.resources) {
+    html += `<div style="color:#a8c8d8;font-weight:bold;margin-top:8px">Kontakt</div>`;
+    html += `<div class="sol-res">☎ ${sol.resources.hotline}</div>`;
+    html += `<div class="sol-res">🌐 ${sol.resources.online}</div>`;
+    html += `<div class="sol-res">⚠ ${sol.resources.notfall}</div>`;
+  }
+  box.innerHTML = html;
+
+  const amtBox = document.getElementById("amtBox");
+  if (sol.aemter && sol.aemter.length) {
+    amtBox.innerHTML = sol.aemter.map(a => `
+      <div class="amt">
+        <div class="h">${a.label}</div>
+        <div class="t">${a.tasks.join(" · ")}</div>
+        <div class="c">↳ ${a.contact}</div>
+      </div>
+    `).join("");
+    document.getElementById("amtCount").textContent = sol.aemter.length;
+  } else {
+    amtBox.innerHTML = `<div style="color:#5a7288;font-size:11px">— keine aktiv —</div>`;
+    document.getElementById("amtCount").textContent = "0";
+  }
+  document.getElementById("solBadge").textContent = sol.area;
+
+  updateSense();
+  log(`◈ coach · ${area?.label || sol.area} → ${sol.issue}`, "coach");
 }
 
-/* ─── CLI ───────────────────────────────────────────────────── */
+function coachReset() {
+  document.querySelectorAll(".topic").forEach(el => el.classList.remove("on"));
+  COACH.solution = null;
+  COACH.focus = null;
+  R.coach.activeArea = null;
+  R.coach.lastSolution = null;
+  document.getElementById("coachMode").textContent = "bereit";
+  document.getElementById("solBadge").textContent = "—";
+  document.getElementById("solBox").innerHTML =
+    '<div style="color:#5a7288;font-size:11px">Wähle ein Thema (1–7) oder tippe: <code>coach wohnung zu teuer</code></div>';
+  document.getElementById("amtBox").innerHTML =
+    '<div style="color:#5a7288;font-size:11px">— keine aktiv —</div>';
+  document.getElementById("amtCount").textContent = "0";
+  updateSense();
+  log("⟲ coach · reset", "warn");
+}
+
+/* ─── CLI ──────────────────────────────────────────────────── */
 const cli = document.getElementById("cli");
 
 cli.addEventListener("keydown", (e) => {
   if (e.key === "Enter") {
-    const input = cli.value.trim();
-    cli.value = "";
-    if (input) {
-      R.history.push(input);
-      R.histIdx = R.history.length;
-      log("1> " + input);
-      runCmd(input);
-    }
+    const v = cli.value.trim(); cli.value = "";
+    if (v) { R.history.push(v); R.histIdx = R.history.length; log("1> " + v); runCmd(v); }
   } else if (e.key === "ArrowUp") {
     e.preventDefault();
-    if (R.histIdx > 0) {
-      R.histIdx--;
-      cli.value = R.history[R.histIdx] || "";
-    }
+    if (R.histIdx > 0) { R.histIdx--; cli.value = R.history[R.histIdx] || ""; }
   } else if (e.key === "ArrowDown") {
     e.preventDefault();
-    if (R.histIdx < R.history.length - 1) {
-      R.histIdx++;
-      cli.value = R.history[R.histIdx] || "";
-    } else {
-      R.histIdx = R.history.length;
-      cli.value = "";
-    }
+    if (R.histIdx < R.history.length - 1) { R.histIdx++; cli.value = R.history[R.histIdx] || ""; }
+    else { R.histIdx = R.history.length; cli.value = ""; }
+  } else if (e.key === "Escape") {
+    cli.blur();
   }
 });
 
@@ -396,123 +711,147 @@ async function runCmd(input) {
   switch (c) {
     case "help":
       log("befehle:", "ok");
-      log("  help              · diese liste");
-      log("  ghost on|off|state");
-      log("  7sinn             · grid anzeigen");
-      log("  7sinn all|none    · alle an/aus");
-      log("  7sinn <n>         · einzeln togglen (1-7)");
-      log("  arg.sync [all]    · synchronisation starten");
-      log("  arg.sync stop     · abbrechen");
-      log("  coach <key>       · routing|keyboard|struktur|kernel|core");
-      log("  status            · system status");
-      log("  sysinfo           · alle werte");
-      log("  clear             · ausgabe löschen");
-      log("  guru              · meditieren");
-      log("  reboot            · neustart");
+      log("  coach <text>       · problem beschreiben → lösung + ämter");
+      log("  coach <1-7>        · thema direkt öffnen");
+      log("  1..7               · themen (Jobcenter Wohnung Arbeit Gesundheit Familie Schulden Behörden)");
+      log("  H                  · soforthilfe-panel (alle themen + ämter)");
+      log("  R                  · coach reset");
+      log("  ghost on|off|state|wraith");
+      log("  7sinn all|none|<n>");
+      log("  arg.sync [all|stop]");
+      log("  lebens             · lebens-ordner zeigen (4 DIN-A4)");
+      log("  aemter             · alle ämter auflisten");
+      log("  status · sysinfo · clear · guru · reboot");
       break;
 
-    case "ghost":
-      if (args[0] === "on") ghostSet(true);
-      else if (args[0] === "off") ghostSet(false);
-      else if (args[0] === "state" || !args[0]) {
-        log(`👻 state=${R.ghost.state} line=${R.ghost.line} mode=${R.ghost.mode} wraith=${R.ghost.wraith ? "on" : "off"}`, "ok");
-      } else if (args[0] === "wraith") {
-        R.ghost.wraith = !R.ghost.wraith;
-        updateGhostUI();
-        log(`wraith · ${R.ghost.wraith ? "on" : "off"} · filter erkennt destruktive muster`, R.ghost.wraith ? "ok" : "warn");
+    case "coach": {
+      if (!args.length) { log("nutzung: coach <text> oder coach 1-7", "err"); break; }
+      if (/^[1-7]$/.test(args[0])) {
+        const t = COACH.topics[parseInt(args[0],10)-1];
+        if (t) runCoachArea(t.key);
       } else {
-        log("nutzung: ghost on|off|state|wraith", "err");
+        runCoachText(args.join(" "));
+      }
+      break;
+    }
+
+    case "lebens":
+      log("◈ lebens-ordner · 4 DIN-A4 blätter", "coach");
+      for (const [folder, items] of Object.entries(LEBENS_ORDNER)) {
+        log(`  ▸ ${folder}`, "info");
+        log(`    ${items.join(" · ")}`, "");
       }
       break;
 
+    case "aemter":
+      log("◈ ämter-register · " + Object.keys(COACH.aemter).length, "coach");
+      for (const [k, a] of Object.entries(COACH.aemter)) {
+        log(`  ${a.label} · ${a.contact}`, "");
+        log(`    ${a.tasks.join(" · ")}`, "info");
+      }
+      break;
+
+    case "ghost":
+      if (args[0]==="on") ghostSet(true);
+      else if (args[0]==="off") ghostSet(false);
+      else if (args[0]==="wraith") {
+        R.ghost.wraith = !R.ghost.wraith;
+        updateGhostUI();
+        log(`wraith · ${R.ghost.wraith?"on":"off"}`, R.ghost.wraith?"ok":"warn");
+      }
+      else log(`👻 state=${R.ghost.state} line=${R.ghost.line} mode=${R.ghost.mode}`, "ok");
+      break;
+
     case "7sinn":
-      if (args[0] === "all") sinnAll(true);
-      else if (args[0] === "none") sinnAll(false);
-      else if (args[0] && /^[1-7]$/.test(args[0])) toggleSinn(parseInt(args[0], 10) - 1);
+      if (args[0]==="all") sinnAll(true);
+      else if (args[0]==="none") sinnAll(false);
+      else if (/^[1-7]$/.test(args[0])) toggleSinn(parseInt(args[0],10)-1);
       else {
-        const on = R.sinn.map((v, i) => v ? SINN_NAMES[i] : null).filter(Boolean);
+        const on = R.sinn.map((v,i)=>v?SINN_NAMES[i]:null).filter(Boolean);
         log(`7sinn · ${R.sinn.filter(Boolean).length}/7 aktiv`, "ok");
-        log("  " + (on.length ? on.join(" · ") : "keine"));
+        log("  " + (on.length?on.join(" · "):"keine"), "");
       }
       break;
 
     case "arg.sync":
-      if (args[0] === "stop") argSyncStop();
-      else argSync(args[0] === "all");
-      break;
-
-    case "coach":
-      coachShow(args[0] || "routing");
+      if (args[0]==="stop") { R.argSync.running=false; R.argSync.progress=0;
+        R.argSync.files={arg:"—",in:"—",up:"—",fit:"—"}; updateSyncUI();
+        log("⟲ arg.sync gestoppt","warn"); }
+      else argSync(args[0]==="all");
       break;
 
     case "status":
-      log(`booted=${R.booted} ghost=${R.ghost.on ? "on" : "off"} sinn=${R.sinn.filter(Boolean).length}/7 sync=${Math.round(R.argSync.progress * 100)}%`, "ok");
+      log(`booted=${R.booted} ghost=${R.ghost.on?"on":"off"} sinn=${R.sinn.filter(Boolean).length}/7 coach=${COACH.sense().state}`, "ok");
       break;
 
     case "sysinfo":
-      log("iki1uc · liveBOOT · runtime");
-      log(`  chip:  ${document.getElementById("chip").textContent}`);
-      log(`  turbo: ${document.getElementById("turbo").textContent}`);
-      log(`  ghost: ${R.ghost.state}`);
-      log(`  7sinn: ${R.sinn.filter(Boolean).length} / 7`);
-      log(`  sync:  ${Math.round(R.argSync.progress * 100)}%`);
+      log("iki1uc · liveBOOT · COACH · runtime");
+      log(`  chip:    93 (3+9+81)`);
+      log(`  7sinn:   ${R.sinn.filter(Boolean).length}/7`);
+      log(`  ghost:   ${R.ghost.state}`);
+      log(`  coach:   ${COACH.sense().state} · ${COACH.sense().description}`);
+      log(`  sync:    ${Math.round(R.argSync.progress*100)}%`);
       break;
 
-    case "clear":
-      document.getElementById("cliOut").innerHTML = "";
-      break;
-
-    case "guru":
-      guru("#00000004.0000AAC0");
-      break;
-
-    case "reboot":
-      location.reload();
-      break;
+    case "clear": document.getElementById("cliOut").innerHTML=""; break;
+    case "guru": guru("#00000004.0000AAC0"); break;
+    case "reboot": location.reload(); break;
 
     default:
       log(`⚠ unbekannt: ${c} · 'help'`, "err");
   }
 }
 
-/* ─── COACH clicks ──────────────────────────────────────────── */
-document.querySelectorAll(".coach-item").forEach(el => {
-  el.onclick = () => {
-    const key = el.dataset.cmd.replace("coach ", "");
-    coachShow(key);
-  };
+/* ─── GLOBAL KEYBOARD (außerhalb CLI) ──────────────────────── */
+document.addEventListener("keydown", (e) => {
+  if (e.target.tagName === "INPUT") return;
+  if (/^[1-7]$/.test(e.key)) {
+    const t = COACH.topics[parseInt(e.key,10)-1];
+    if (t) { log(`1> ${e.key}`, ""); runCoachArea(t.key); }
+  }
+  else if (e.key === "h" || e.key === "H") {
+    log("1> H", "");
+    log("◈ SOFORTHILFE · alle themen", "coach");
+    COACH.topics.forEach(t => log(`  ${t.n} · ${t.label} · ordner ${t.folder}`, ""));
+    log("  Bei akuter Krise: 112 oder 110", "warn");
+  }
+  else if (e.key === "r" || e.key === "R") {
+    log("1> R", "");
+    coachReset();
+  }
 });
 
-/* ─── GURU ──────────────────────────────────────────────────── */
+/* ─── GURU ─────────────────────────────────────────────────── */
 function guru(code) {
   const g = document.getElementById("guru");
   document.getElementById("guruCode").textContent = code;
   g.style.display = "block";
-  const kill = () => { g.style.display = "none"; document.removeEventListener("click", kill); };
+  const kill = () => { g.style.display="none"; document.removeEventListener("click",kill); };
   setTimeout(() => document.addEventListener("click", kill), 300);
 }
 
-/* ─── CLOCK ─────────────────────────────────────────────────── */
+/* ─── CLOCK ────────────────────────────────────────────────── */
 setInterval(() => {
   document.getElementById("clock").textContent = new Date().toLocaleTimeString("de-DE");
 }, 1000);
 
-/* ─── BOOT ──────────────────────────────────────────────────── */
+/* ─── BOOT ─────────────────────────────────────────────────── */
 kickstart();
 
-/* ─── PUBLIC API ────────────────────────────────────────────── */
+/* ─── PUBLIC API ───────────────────────────────────────────── */
 window.RUNTIME = window.R = Object.assign(R, {
   cli: (cmd) => runCmd(cmd),
+  coach: { solve: (t) => COACH.solve(t), areas: COACH.areas, aemter: COACH.aemter, topics: COACH.topics },
+  lebens: LEBENS_ORDNER,
   state: () => ({
-    ghost: { ...R.ghost },
-    sinn: [...R.sinn],
-    sync: R.argSync.progress,
-    coach: R.coach.mode,
-  }),
+    ghost: { ...R.ghost }, sinn: [...R.sinn],
+    coach: COACH.sense(), sync: R.argSync.progress
+  })
 });
 
-console.log("%c◈ iki1uc · liveBOOT · runtime", "color:#f0d080;font-weight:bold;font-size:14px");
-console.log("→ R.cli('help') · R.state() · R.ghost.on · R.argSync");
+console.log("%c◈ iki1uc · liveBOOT · COACH", "color:#f0d080;font-weight:bold;font-size:14px");
+console.log("CLOSED · NO-CLONE · BUSINESS · © iki1uc wieimmer");
+console.log("→ R.cli('help') · R.coach.solve('wohnung zu teuer') · R.state()");
 </script>
 </body>
 </html>
