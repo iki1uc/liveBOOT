@@ -48,6 +48,7 @@
   .cli-line.warn .txt{color:#f0d080}
   .cli-line.info .txt{color:#5cf0ff}
   .cli-line.coach .txt{color:#f0a000}
+  .cli-line.hilfe .txt{color:#ff8ab0}
 
   #cliRow{background:#000;border-top:1px solid #0c1828;padding:4px;display:flex;gap:6px}
   #cliRow span{color:#0ff}
@@ -93,6 +94,7 @@
   .sol-step{padding:2px 0;color:#a8c8d8;font-size:11px}
   .sol-help{color:#0ff;font-size:11px;padding:1px 0}
   .sol-res{color:#0f0;font-size:10.5px;padding:1px 0}
+  .sol-hilfe{color:#ff8ab0;font-size:10.5px;padding:1px 0;line-height:1.45}
 
   /* Sync */
   .sync-bar{height:6px;background:#0c1828;border-radius:2px;overflow:hidden;margin:3px 0}
@@ -153,9 +155,9 @@
     <!-- COL 1: CLI -->
     <div class="col">
       <div class="panel" style="flex:1">
-        <h2><span>◈ CLI</span><span>runtime · coach · ghost · 7sinn · arg.sync</span></h2>
+        <h2><span>◈ CLI</span><span>runtime · coach · ghost · 7sinn · ort</span></h2>
         <div class="body" id="cliOut"></div>
-        <div id="cliRow"><span>1&gt;</span><input id="cli" placeholder="help · coach wohnung · 1-7 · H · R" autocomplete="off" autofocus></div>
+        <div id="cliRow"><span>1&gt;</span><input id="cli" placeholder="help · coach wohnung · 1-7 · H · R · ort hilfe" autocomplete="off" autofocus></div>
       </div>
     </div>
 
@@ -206,7 +208,8 @@
             Wähle ein Thema (1–7) oder tippe:<br>
             <code>coach wohnung zu teuer</code><br>
             <code>coach arbeit kündigung</code><br>
-            <code>coach finanzen schulden</code>
+            <code>coach finanzen schulden</code><br><br>
+            <code>ort hilfe</code> · Nummern, anonym, zum Weiterdenken
           </div>
         </div>
       </div>
@@ -232,8 +235,30 @@
 "use strict";
 /* ═══════════════════════════════════════════════════════════════
    iki1uc · liveBOOT · runtime · COACH
-   CLOSED · NO-CLONE · BUSINESS · © iki1uc wieimmer
+   © iki1uc · Nutzung nur mit Einladung
    ═══════════════════════════════════════════════════════════════ */
+
+/* ─── HILFE-NUMMERN · ehrlich · anonym · zum Weiterdenken ─── */
+const HILFE = {
+  rahmung: "Sie holen dich nicht aus dem Brunnen. Aber sie denken mit. Anonym · erste Beratung · kostenlos.",
+  deutschland: [
+    { name: "Telefonseelsorge",     tel: "0800 111 0 111", rund: "24/7",   wozu: "Sorgen · Ängste · Krisen · Reden ohne Namen" },
+    { name: "Telefonseelsorge",     tel: "0800 111 0 222", rund: "24/7",   wozu: "zweite Leitung — falls erste belegt" },
+    { name: "Ärztl. Bereitschaft",  tel: "116 117",        rund: "24/7",   wozu: "krank · kein Notfall · kein Arzt erreichbar" },
+    { name: "Notruf",               tel: "112",            rund: "24/7",   wozu: "akute Lebensgefahr · Unfall · medizinisch" },
+    { name: "Polizei",              tel: "110",            rund: "24/7",   wozu: "Straftat · akute Gefahr · Sicherheit" },
+    { name: "Giftnotruf",           tel: "0361 730730",    rund: "24/7",   wozu: "Vergiftung · Chemie · Medikamente" },
+    { name: "Hilfetelefon Frauen",  tel: "0800 1160166",   rund: "24/7",   wozu: "Gewalt · Bedrohung · anonym" },
+    { name: "Nummer gegen Kummer",  tel: "116 111",        rund: "Mo–Sa",  wozu: "Kinder · Jugendliche · alles was schwer ist" },
+    { name: "Bürgertelefon",        tel: "115",            rund: "Mo–Fr",  wozu: "Behörde · Zuständigkeit · Formulare" },
+  ],
+  stadt: {
+    name: "",
+    rathaus:   { name: "", tel: "" },
+    notdienst: { name: "", tel: "" },
+    hilfen:    []
+  }
+};
 
 /* ─── COACH · Humanistischer Lebens-Agent ─────────────────── */
 const COACH = {
@@ -259,7 +284,7 @@ const COACH = {
     },
     finanzen: {
       label: "💰 Finanzen",
-      issues: ["schulden","alg","bürgergeld","steuern","kredite","finanzen","geld"],
+      issues: ["schulden","alg ii","alg","bürgergeld","steuern","kredite","finanzen","geld"],
       help: ["Schuldnerberatung","Jobcenter","Finanzamt","Verbraucherzentrale"]
     },
     familie: {
@@ -272,27 +297,26 @@ const COACH = {
       issues: ["behörde","behörden","amt","antrag","formular","termin","ausländerbehörde","aufenthalt"],
       help: ["Bürgeramt","Ausländerbehörde","Sozialamt","Bürgertelefon 115"]
     },
-    // Jobcenter + Schulden als Alias-Themen für UI 1-7
     jobcenter: {
       label: "🏛️ Jobcenter",
-      issues: ["jobcenter","alg i","alg ii","eingliederung","vermittlung"],
+      issues: ["jobcenter","alg i","eingliederung","vermittlung"],
       help: ["Jobcenter Terminvereinbarung","Arbeitsamt","Sozialberatung"]
     }
   },
 
   aemter: {
-    jobcenter: { label:"🏛️ Jobcenter", contact:"Terminvereinbarung", tasks:["ALG II","Bürgergeld","Eingliederung"] },
-    arbeitsamt: { label:"🏛️ Arbeitsamt", contact:"Online-Portal", tasks:["Arbeitslosengeld","Weiterbildung","Vermittlung"] },
-    wohnungsamt: { label:"🏛️ Wohnungsamt", contact:"Stadtverwaltung", tasks:["Wohnberechtigungsschein","Sozialwohnung"] },
-    jugendamt: { label:"🏛️ Jugendamt", contact:"Telefon + Beratung", tasks:["Kinderbetreuung","Sorgerecht","Hilfe"] },
-    sozialamt: { label:"🏛️ Sozialamt", contact:"Persönlich oder Online", tasks:["Sozialhilfe","Grundsicherung"] },
-    gesundheitsamt: { label:"🏛️ Gesundheitsamt", contact:"Termin", tasks:["Impfung","Gesundheitszeugnis"] },
-    finanzamt: { label:"🏛️ Finanzamt", contact:"Online + Telefon", tasks:["Steuererklärung","Steuer-ID"] },
-    auslaenderbehoerde: { label:"🏛️ Ausländerbehörde", contact:"Termin", tasks:["Aufenthaltstitel","Einbürgerung"] },
-    rentenversicherung: { label:"🏛️ Rentenversicherung", contact:"Online + Telefon", tasks:["Rentenantrag","Kontenklärung"] }
+    jobcenter:          { label:"🏛️ Jobcenter",          contact:"Terminvereinbarung",     tasks:["ALG II","Bürgergeld","Eingliederung"] },
+    arbeitsamt:         { label:"🏛️ Arbeitsamt",         contact:"Online-Portal",          tasks:["Arbeitslosengeld","Weiterbildung","Vermittlung"] },
+    wohnungsamt:        { label:"🏛️ Wohnungsamt",        contact:"Stadtverwaltung",        tasks:["Wohnberechtigungsschein","Sozialwohnung"] },
+    jugendamt:          { label:"🏛️ Jugendamt",          contact:"Telefon + Beratung",     tasks:["Kinderbetreuung","Sorgerecht","Hilfe"] },
+    sozialamt:          { label:"🏛️ Sozialamt",          contact:"Persönlich oder Online", tasks:["Sozialhilfe","Grundsicherung"] },
+    gesundheitsamt:     { label:"🏛️ Gesundheitsamt",     contact:"Termin",                 tasks:["Impfung","Gesundheitszeugnis"] },
+    finanzamt:          { label:"🏛️ Finanzamt",          contact:"Online + Telefon",       tasks:["Steuererklärung","Steuer-ID"] },
+    auslaenderbehoerde: { label:"🏛️ Ausländerbehörde",   contact:"Termin",                 tasks:["Aufenthaltstitel","Einbürgerung"] },
+    rentenversicherung: { label:"🏛️ Rentenversicherung", contact:"Online + Telefon",       tasks:["Rentenantrag","Kontenklärung"] },
+    krankenkasse:       { label:"🏥 Krankenkasse",       contact:"Online + Telefon",       tasks:["Leistungen","Krankmeldung","Anträge"] }
   },
 
-  // 7 UI-Themen → interner Bereich
   topics: [
     { n:1, key:"jobcenter",  label:"Jobcenter", folder:"Arbeit" },
     { n:2, key:"wohnen",     label:"Wohnung",   folder:"Wohnen" },
@@ -314,6 +338,7 @@ const COACH = {
       area: match.area,
       issue: match.issue,
       help: match.help,
+      folder: this.areas[match.area]?.folder || "—",
       aemter: this.findAemter(match.area),
       steps: this.generateSteps(match),
       resources: this.findResources(match)
@@ -327,7 +352,6 @@ const COACH = {
   matchProblem(input) {
     const lower = (input || "").toLowerCase();
     if (!lower) return null;
-    // längste Treffer zuerst (spezifischer)
     let best = null, bestLen = 0;
     for (const [key, area] of Object.entries(this.areas)) {
       for (const issue of area.issues) {
@@ -342,13 +366,13 @@ const COACH = {
 
   findAemter(areaKey) {
     const map = {
-      wohnen:      ["wohnungsamt","sozialamt"],
-      arbeit:      ["jobcenter","arbeitsamt"],
-      gesundheit:  ["gesundheitsamt","rentenversicherung"],
-      finanzen:    ["finanzamt","jobcenter"],
-      familie:     ["jugendamt","sozialamt"],
-      behoerden:   ["auslaenderbehoerde","sozialamt","finanzamt"],
-      jobcenter:   ["jobcenter","arbeitsamt"]
+      wohnen:     ["wohnungsamt","sozialamt"],
+      arbeit:     ["jobcenter","arbeitsamt"],
+      gesundheit: ["gesundheitsamt","krankenkasse"],
+      finanzen:   ["finanzamt","jobcenter"],
+      familie:    ["jugendamt","sozialamt"],
+      behoerden:  ["auslaenderbehoerde","sozialamt","finanzamt"],
+      jobcenter:  ["jobcenter","arbeitsamt"]
     };
     const keys = map[areaKey] || [];
     return keys.map(k => this.aemter[k] ? { key:k, ...this.aemter[k] } : null).filter(Boolean);
@@ -365,11 +389,12 @@ const COACH = {
   },
 
   findResources(match) {
+    const st = HILFE.stadt;
     return {
-      hotline: "0800 123 4567 (kostenlos)",
-      online:  `www.${match.area}-hilfe.de`,
-      vorort:  `Nächste Beratungsstelle für ${match.area}`,
-      notfall: "Bei akuter Krise: 112 oder 110"
+      stadt:    st.name || "— nicht gesetzt · tippe: ort setzen <stadt> —",
+      rathaus:  st.rathaus.tel || "— nicht eingetragen —",
+      notdienst:st.notdienst.tel || "112 / 110",
+      hilfen:   st.hilfen.length ? st.hilfen : []
     };
   },
 
@@ -395,6 +420,18 @@ const COACH = {
     };
     const key = this.solution ? "fit" : "rdy";
     return { state: key, description: states[key] };
+  },
+
+  negotiate(problem, answer) {
+    const sol = this.solve(problem);
+    switch (answer) {
+      case "ja":          return { ok:true, action:"angenommen", solution:sol };
+      case "nein":        this.solution = null; return { ok:true, action:"abgelehnt", message:"Ok. Nichts weiter." };
+      case "später":      return { ok:true, action:"später", message:"Ok. In 30 min nochmal." };
+      case "heute nicht": return { ok:true, action:"heute-nicht", message:"Ok. Ruhe bis morgen." };
+      case "nie":         return { ok:true, action:"nie", message:"Verstanden. Nie mehr." };
+      default:            return { ok:false, action:"frage", solution:sol };
+    }
   }
 };
 
@@ -457,8 +494,8 @@ async function kickstart() {
   R.booted = true;
   log("◈ runtime ready", "ok");
   log("◈ COACH · Humanistischer Lebens-Agent", "coach");
-  log("CLOSED · NO-CLONE · BUSINESS · © iki1uc wieimmer", "warn");
-  log("🖐 tippe 'help' für alle befehle", "ok");
+  log("© iki1uc · Nutzung nur mit Einladung", "ok");
+  log("🖐 tippe 'help' oder 'ort hilfe'", "ok");
 }
 
 /* ─── 7SINN ────────────────────────────────────────────────── */
@@ -542,6 +579,78 @@ async function argSync(all = false) {
   log("◈ arg.sync complete", "ok");
 }
 
+/* ─── ORT · Hilfenummern ───────────────────────────────────── */
+function ortLoad() {
+  try {
+    const raw = localStorage.getItem("iki1uc_ort");
+    if (raw) {
+      const data = JSON.parse(raw);
+      Object.assign(HILFE.stadt, data);
+    }
+  } catch(_) {}
+}
+function ortSave() {
+  try { localStorage.setItem("iki1uc_ort", JSON.stringify(HILFE.stadt)); } catch(_) {}
+}
+function ortSet(args) {
+  if (args[0] === "stadt") {
+    HILFE.stadt.name = args.slice(1).join(" ");
+    ortSave();
+    log(`📍 Stadt gespeichert: ${HILFE.stadt.name}`, "ok");
+  }
+  else if (args[0] === "rathaus") {
+    HILFE.stadt.rathaus.tel = args.slice(1).join(" ");
+    ortSave();
+    log(`🏛️ Rathaus Tel: ${HILFE.stadt.rathaus.tel}`, "ok");
+  }
+  else if (args[0] === "notdienst") {
+    HILFE.stadt.notdienst.tel = args.slice(1).join(" ");
+    ortSave();
+    log(`⚠️ Notdienst Tel: ${HILFE.stadt.notdienst.tel}`, "ok");
+  }
+  else if (args[0] === "hilfe") {
+    const name = args[1] || "";
+    const tel = args[2] || "";
+    if (!name || !tel) { log("nutzung: ort eintrag <name> <tel>", "err"); return; }
+    HILFE.stadt.hilfen.push({ name, tel });
+    ortSave();
+    log(`🆘 Hilfe hinzugefügt: ${name} · ${tel}`, "ok");
+  }
+  else {
+    log("nutzung: ort setzen stadt|rathaus|notdienst <wert>", "err");
+    log("        ort eintrag <name> <tel>", "");
+  }
+}
+function ortZeigen() {
+  log("📍 Deine Stadt: " + (HILFE.stadt.name || "— nicht gesetzt —"), "coach");
+  if (HILFE.stadt.rathaus.tel) log("🏛️ Rathaus: " + HILFE.stadt.rathaus.tel, "");
+  if (HILFE.stadt.notdienst.tel) log("⚠️ Notdienst: " + HILFE.stadt.notdienst.tel, "");
+  if (HILFE.stadt.hilfen.length) {
+    log("🆘 Eigene Hilfen:", "");
+    HILFE.stadt.hilfen.forEach(h => log(`   · ${h.name}  ${h.tel}`, "hilfe"));
+  }
+  if (!HILFE.stadt.name && !HILFE.stadt.hilfen.length) {
+    log("   tippe: ort setzen stadt <name>", "warn");
+  }
+}
+function ortHilfe() {
+  log("🆘 HILFE · " + HILFE.rahmung, "hilfe");
+  log("", "");
+  HILFE.deutschland.forEach(h => {
+    log(`☎  ${h.name.padEnd(22)} ${h.tel.padEnd(18)} · ${h.rund}`, "");
+    log(`     ${h.wozu}`, "info");
+  });
+  log("", "");
+  if (HILFE.stadt.name) {
+    log(`📍 Deine Stadt: ${HILFE.stadt.name}`, "coach");
+    if (HILFE.stadt.rathaus.tel) log(`   🏛️ Rathaus   ${HILFE.stadt.rathaus.tel}`, "");
+    if (HILFE.stadt.notdienst.tel) log(`   ⚠️ Notdienst ${HILFE.stadt.notdienst.tel}`, "");
+    HILFE.stadt.hilfen.forEach(h => log(`   · ${h.name}  ${h.tel}`, "hilfe"));
+  } else {
+    log("📍 Stadt nicht gesetzt · ort setzen stadt <name>", "warn");
+  }
+}
+
 /* ─── COACH · topics + UI ──────────────────────────────────── */
 function buildTopics() {
   const el = document.getElementById("topicGrid");
@@ -563,41 +672,26 @@ function updateSense() {
   document.getElementById("coachState").textContent = s.state;
 }
 
-function runCoachArea(areaKey) {
-  const area = COACH.areas[areaKey];
-  if (!area) { log(`⚠ coach · unbekannt: ${areaKey}`, "err"); return; }
-
-  document.querySelectorAll(".topic").forEach(el =>
-    el.classList.toggle("on", el.dataset.key === areaKey)
-  );
-
-  const sol = COACH.solve(null, areaKey);
-  R.coach.activeArea = areaKey;
-  R.coach.lastSolution = sol;
-
-  // Themen-Ordner aus COACH.topics lesen
-  const topic = COACH.topics.find(t => t.key === areaKey);
-  const folder = topic ? topic.folder : "—";
-  document.getElementById("coachMode").textContent = area.label.replace(/^[^\s]+\s/, "");
-
-  // Lösung rendern
-  const box = document.getElementById("solBox");
-  let html = `<div class="sol-issue">${area.label} · ${sol.issue || "—"}</div>`;
-  html += `<div style="color:#5cf0ff;font-size:11px;margin-bottom:4px">Ordner: ${folder}</div>`;
+function renderSolution(sol, box, amtBox, solBadge) {
+  const area = COACH.areas[sol.area];
+  let html = `<div class="sol-issue">${area?.label || sol.area} · ${sol.issue || "—"}</div>`;
+  html += `<div style="color:#5cf0ff;font-size:11px;margin-bottom:4px">Ordner: ${sol.folder || "—"}</div>`;
   html += `<div style="color:#a8c8d8;font-weight:bold;margin-top:6px">Schritte</div>`;
   sol.steps.forEach(st => html += `<div class="sol-step">→ ${st}</div>`);
   html += `<div style="color:#a8c8d8;font-weight:bold;margin-top:8px">Hilfe</div>`;
   sol.help.forEach(h => html += `<div class="sol-help">· ${h}</div>`);
   if (sol.resources) {
-    html += `<div style="color:#a8c8d8;font-weight:bold;margin-top:8px">Kontakt</div>`;
-    html += `<div class="sol-res">☎ ${sol.resources.hotline}</div>`;
-    html += `<div class="sol-res">🌐 ${sol.resources.online}</div>`;
-    html += `<div class="sol-res">⚠ ${sol.resources.notfall}</div>`;
+    html += `<div style="color:#a8c8d8;font-weight:bold;margin-top:8px">Deine Stadt</div>`;
+    html += `<div class="sol-hilfe">📍 ${sol.resources.stadt}</div>`;
+    html += `<div class="sol-hilfe">🏛️ Rathaus: ${sol.resources.rathaus}</div>`;
+    html += `<div class="sol-hilfe">⚠️ Notdienst: ${sol.resources.notdienst}</div>`;
+    if (sol.resources.hilfen.length) {
+      sol.resources.hilfen.forEach(h => html += `<div class="sol-hilfe">· ${h.name} ${h.tel}</div>`);
+    }
+    html += `<div style="margin-top:6px;font-size:10px;color:#8899aa">🆘 ort hilfe → alle Nummern, anonym</div>`;
   }
   box.innerHTML = html;
 
-  // Ämter rendern
-  const amtBox = document.getElementById("amtBox");
   if (sol.aemter && sol.aemter.length) {
     amtBox.innerHTML = sol.aemter.map(a => `
       <div class="amt">
@@ -611,8 +705,27 @@ function runCoachArea(areaKey) {
     amtBox.innerHTML = `<div style="color:#5a7288;font-size:11px">— keine aktiv —</div>`;
     document.getElementById("amtCount").textContent = "0";
   }
-  document.getElementById("solBadge").textContent = areaKey;
+  solBadge.textContent = sol.area;
+}
 
+function runCoachArea(areaKey) {
+  const area = COACH.areas[areaKey];
+  if (!area) { log(`⚠ coach · unbekannt: ${areaKey}`, "err"); return; }
+
+  document.querySelectorAll(".topic").forEach(el =>
+    el.classList.toggle("on", el.dataset.key === areaKey)
+  );
+
+  const sol = COACH.solve(null, areaKey);
+  R.coach.activeArea = areaKey;
+  R.coach.lastSolution = sol;
+
+  document.getElementById("coachMode").textContent = area.label.replace(/^[^\s]+\s/, "");
+  renderSolution(sol,
+    document.getElementById("solBox"),
+    document.getElementById("amtBox"),
+    document.getElementById("solBadge")
+  );
   updateSense();
   log(`◈ coach · ${area.label} · ${sol.steps.length} schritte · ${sol.aemter.length} ämter`, "coach");
 }
@@ -634,36 +747,11 @@ function runCoachText(text) {
   document.getElementById("coachMode").textContent =
     (area?.label || sol.area).replace(/^[^\s]+\s/, "");
 
-  const box = document.getElementById("solBox");
-  let html = `<div class="sol-issue">${area?.label || sol.area} · "${sol.issue}"</div>`;
-  html += `<div style="color:#a8c8d8;font-weight:bold">Schritte</div>`;
-  sol.steps.forEach(st => html += `<div class="sol-step">→ ${st}</div>`);
-  html += `<div style="color:#a8c8d8;font-weight:bold;margin-top:8px">Hilfe</div>`;
-  sol.help.forEach(h => html += `<div class="sol-help">· ${h}</div>`);
-  if (sol.resources) {
-    html += `<div style="color:#a8c8d8;font-weight:bold;margin-top:8px">Kontakt</div>`;
-    html += `<div class="sol-res">☎ ${sol.resources.hotline}</div>`;
-    html += `<div class="sol-res">🌐 ${sol.resources.online}</div>`;
-    html += `<div class="sol-res">⚠ ${sol.resources.notfall}</div>`;
-  }
-  box.innerHTML = html;
-
-  const amtBox = document.getElementById("amtBox");
-  if (sol.aemter && sol.aemter.length) {
-    amtBox.innerHTML = sol.aemter.map(a => `
-      <div class="amt">
-        <div class="h">${a.label}</div>
-        <div class="t">${a.tasks.join(" · ")}</div>
-        <div class="c">↳ ${a.contact}</div>
-      </div>
-    `).join("");
-    document.getElementById("amtCount").textContent = sol.aemter.length;
-  } else {
-    amtBox.innerHTML = `<div style="color:#5a7288;font-size:11px">— keine aktiv —</div>`;
-    document.getElementById("amtCount").textContent = "0";
-  }
-  document.getElementById("solBadge").textContent = sol.area;
-
+  renderSolution(sol,
+    document.getElementById("solBox"),
+    document.getElementById("amtBox"),
+    document.getElementById("solBadge")
+  );
   updateSense();
   log(`◈ coach · ${area?.label || sol.area} → ${sol.issue}`, "coach");
 }
@@ -677,7 +765,7 @@ function coachReset() {
   document.getElementById("coachMode").textContent = "bereit";
   document.getElementById("solBadge").textContent = "—";
   document.getElementById("solBox").innerHTML =
-    '<div style="color:#5a7288;font-size:11px">Wähle ein Thema (1–7) oder tippe: <code>coach wohnung zu teuer</code></div>';
+    '<div style="color:#5a7288;font-size:11px">Wähle ein Thema (1–7) oder tippe: <code>coach wohnung zu teuer</code><br><br><code>ort hilfe</code> · Nummern, anonym, zum Weiterdenken</div>';
   document.getElementById("amtBox").innerHTML =
     '<div style="color:#5a7288;font-size:11px">— keine aktiv —</div>';
   document.getElementById("amtCount").textContent = "0";
@@ -716,6 +804,10 @@ async function runCmd(input) {
       log("  1..7               · themen (Jobcenter Wohnung Arbeit Gesundheit Familie Schulden Behörden)");
       log("  H                  · soforthilfe-panel (alle themen + ämter)");
       log("  R                  · coach reset");
+      log("  ort hilfe          · alle Hilfenummern (anonym, kostenlos)");
+      log("  ort setzen <feld>  · stadt|rathaus|notdienst <wert>");
+      log("  ort eintrag <n> <t>· eigene Hilfe hinzufügen");
+      log("  ort zeigen         · deine gespeicherte Stadt");
       log("  ghost on|off|state|wraith");
       log("  7sinn all|none|<n>");
       log("  arg.sync [all|stop]");
@@ -729,11 +821,30 @@ async function runCmd(input) {
       if (/^[1-7]$/.test(args[0])) {
         const t = COACH.topics[parseInt(args[0],10)-1];
         if (t) runCoachArea(t.key);
+      } else if (["ja","nein","später","heute nicht","nie"].includes(args[0])) {
+        const r = COACH.negotiate(R.coach.lastSolution?.issue || "", args[0]);
+        log(`◈ verhandlung · ${r.action} · ${r.message || ""}`, "ok");
       } else {
         runCoachText(args.join(" "));
       }
       break;
     }
+
+    case "ort":
+      if (!args[0] || args[0] === "hilfe") ortHilfe();
+      else if (args[0] === "setzen") ortSet(args.slice(1));
+      else if (args[0] === "eintrag") {
+        // ort eintrag <name> <tel>
+        const name = args[1] || "";
+        const tel = args[2] || "";
+        if (!name || !tel) { log("nutzung: ort eintrag <name> <tel>", "err"); break; }
+        HILFE.stadt.hilfen.push({ name, tel });
+        ortSave();
+        log(`🆘 hinzugefügt: ${name} · ${tel}`, "ok");
+      }
+      else if (args[0] === "zeigen") ortZeigen();
+      else log("nutzung: ort hilfe | setzen <feld> | eintrag <name> <tel> | zeigen", "err");
+      break;
 
     case "lebens":
       log("◈ lebens-ordner · 4 DIN-A4 blätter", "coach");
@@ -791,6 +902,7 @@ async function runCmd(input) {
       log(`  ghost:   ${R.ghost.state}`);
       log(`  coach:   ${COACH.sense().state} · ${COACH.sense().description}`);
       log(`  sync:    ${Math.round(R.argSync.progress*100)}%`);
+      log(`  ort:     ${HILFE.stadt.name || "— nicht gesetzt —"}`);
       break;
 
     case "clear": document.getElementById("cliOut").innerHTML=""; break;
@@ -811,9 +923,14 @@ document.addEventListener("keydown", (e) => {
   }
   else if (e.key === "h" || e.key === "H") {
     log("1> H", "");
-    log("◈ SOFORTHILFE · alle themen", "coach");
+    log("◈ SOFORTHILFE", "coach");
     COACH.topics.forEach(t => log(`  ${t.n} · ${t.label} · ordner ${t.folder}`, ""));
-    log("  Bei akuter Krise: 112 oder 110", "warn");
+    log("", "");
+    log("🆘 " + HILFE.rahmung, "hilfe");
+    log("   Telefonseelsorge  0800 111 0 111", "");
+    log("   Ärztl. Bereitschaft  116 117", "");
+    log("   Notruf  112 · Polizei  110", "");
+    log("   ort hilfe → alle Nummern", "info");
   }
   else if (e.key === "r" || e.key === "R") {
     log("1> R", "");
@@ -836,22 +953,25 @@ setInterval(() => {
 }, 1000);
 
 /* ─── BOOT ─────────────────────────────────────────────────── */
+ortLoad();
 kickstart();
 
 /* ─── PUBLIC API ───────────────────────────────────────────── */
 window.RUNTIME = window.R = Object.assign(R, {
   cli: (cmd) => runCmd(cmd),
   coach: { solve: (t) => COACH.solve(t), areas: COACH.areas, aemter: COACH.aemter, topics: COACH.topics },
+  ort: HILFE,
   lebens: LEBENS_ORDNER,
   state: () => ({
     ghost: { ...R.ghost }, sinn: [...R.sinn],
-    coach: COACH.sense(), sync: R.argSync.progress
+    coach: COACH.sense(), sync: R.argSync.progress,
+    stadt: HILFE.stadt.name
   })
 });
 
 console.log("%c◈ iki1uc · liveBOOT · COACH", "color:#f0d080;font-weight:bold;font-size:14px");
-console.log("CLOSED · NO-CLONE · BUSINESS · © iki1uc wieimmer");
-console.log("→ R.cli('help') · R.coach.solve('wohnung zu teuer') · R.state()");
+console.log("© iki1uc · Nutzung nur mit Einladung");
+console.log("→ R.cli('help') · R.cli('ort hilfe') · R.state()");
 </script>
 </body>
 </html>
