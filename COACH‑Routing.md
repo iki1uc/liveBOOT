@@ -1,36 +1,46 @@
-# COACH-Routing
-CLOSED · NO-CLONE · BUSINESS
+# COACH · Routing
+MIT Lizenz © iki1uc
 
-Das Routing des COACH-Moduls steuert die Zuordnung von Themen,
-Schrittfolgen und Ordnern.
+## Was diese Datei tut
+Sie ordnet Tastendrücke Bereichen zu. Nicht mehr.
+Keine Meinung. Keine Bewertung. Nur Zuordnung.
 
----
+## Warum
+Weil ein Mensch mit sieben Tasten schneller ist als mit einem Menü.
+Weil eine Tabelle ehrlicher ist als ein Algorithmus.
+Weil du sofort weißt: Taste 1 → Jobcenter. Fertig.
 
 ## Ablauf
+1. Taste drücken (1–7 · H · R)
+2. Bereich wird erkannt
+3. Ordner wird aktiviert
+4. Log zeigt den Schritt
+5. Nächste Taste — oder zurück zur Arbeit
 
-1. Tastatur-Eingabe (1–7, H, R)
-2. Bereich wird identifiziert
-3. Schrittfolge wird geladen
-4. Ordner wird aktiviert
-5. SYN-Engine aktualisiert Visualisierung
-6. Live-Log zeigt den Schritt
+Kein Zwischenschritt. Kein Warten. Kein "Bitte bestätigen".
 
----
+## Die Tabelle
 
-## Routing-Tabelle
+| Taste | Bereich | Ordner | Was passiert |
+|-------|---------|--------|-------------|
+| 1 | Jobcenter | Arbeit | Termin, Antrag, Struktur |
+| 2 | Wohnung | Wohnen | Miete, Nachbarn, Vertrag |
+| 3 | Arbeit | Arbeit | Job, Bewerbung, Team |
+| 4 | Gesundheit | Persönlichkeit | Arzt, Kasse, Erholung |
+| 5 | Familie | Persönlichkeit | Kinder, Sorge, Nähe |
+| 6 | Schulden | Wohnen | Beratung, Plan, Ruhe |
+| 7 | Behörden | Mobilität | Amt, Weg, Formular |
+| H | Soforthilfe | Persönlichkeit | Dringend, jetzt, Hilfe |
+| R | Reset | Mobilität | Alles auf Null, ruhig |
 
-Taste | Bereich | Ordner
------ | ------- | -------
-1 | Jobcenter | Arbeit
-2 | Wohnung | Wohnen
-3 | Arbeit | Arbeit
-4 | Gesundheit | Persönlichkeit
-5 | Familie | Persönlichkeit
-6 | Schulden | Wohnen
-7 | Behörden | Mobilität
-H | Soforthilfe | Persönlichkeit
-R | Reset | Mobilität
+## Was diese Datei nicht tut
+- Sie urteilt nicht.
+- Sie speichert nicht.
+- Sie fragt nicht nach.
+- Sie führt nicht.
 
----
+Sie zeigt nur: hier ist die Taste, hier ist der Bereich, hier ist der Ordner.
 
-## CLOSED · NO-CLONE · BUSINESS
+## Du entscheidest
+Drück die Taste — oder nicht.
+Der Rest ist deine Sache.
