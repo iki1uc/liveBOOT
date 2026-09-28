@@ -1,4 +1,4 @@
-# COACH · Modul-Dokumentation
+[# COACH · Modul-Dokumentation
 CLOSED · NO-CLONE · BUSINESS
 
 Der COACH ist das Themen- und Ordner-Modul der Engine.
@@ -97,3 +97,4 @@ Diese Ordner werden dynamisch aktualisiert.
 Keine Weitergabe, kein Fork, kein Clone.
 Nutzung nur mit Genehmigung von iki1uc.
 Branding "iki1uc wieimmer" bleibt bestehen.
+](https://github.com/iki1uc/liveBOOT/blob/main/COACH.md)
