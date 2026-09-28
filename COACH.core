@@ -1,144 +1,215 @@
-// COACH – Humanistischer Lebens-Agent
-// CLOSED · NO-CLONE · BUSINESS
+// COACH · Humanistischer Lebens-Agent
+// © iki1uc · kostenlos · Einzelentscheidung
+// Kein CLOSED. Kein BUSINESS. Nutzung frei.
+// Wer es nutzt, entscheidet selbst, wofür.
 
 const COACH = {
-  // ─── AGENT STATUS ──────────────────────────────────────────
+  // ─── AGENT STATUS ────────────────────────────────────────
   status: "bereit",
   focus: null,
   solution: null,
-  
-  // ─── LEBENSBEREICHE (real) ────────────────────────────────
+
+  // ─── LEBENSBEREICHE ─────────────────────────────────────
   areas: {
     wohnen: {
       label: "🏠 Wohnen",
-      issues: ["Miete zu hoch", "Wohnungssuche", "Schimmel", "Kündigung", "Umzug"],
-      help: ["Mietberatung", "Wohnungsamt", "Sozialhilfe", "Mieterverein"]
+      issues: ["miete zu hoch","wohnungssuche","schimmel","kündigung","umzug","miete","wohnung"],
+      help: ["Mietberatung","Wohnungsamt","Sozialhilfe","Mieterverein"],
+      folder: "Wohnen"
     },
     arbeit: {
       label: "💼 Arbeit & Job",
-      issues: ["Arbeitslosigkeit", "Bewerbung", "Kündigung", "Mobbing", "Überforderung"],
-      help: ["Arbeitsamt", "Jobcenter", "Bewerbungscoaching", "Rechtsberatung"]
+      issues: ["arbeitslosigkeit","arbeitslos","bewerbung","kündigung","mobbing","überforderung","arbeit","job","chef"],
+      help: ["Arbeitsamt","Jobcenter","Bewerbungscoaching","Rechtsberatung"],
+      folder: "Arbeit"
     },
     gesundheit: {
       label: "❤️ Gesundheit",
-      issues: ["Krankheit", "Psychische Belastung", "Suchthilfe", "Pflege", "Krankenkasse"],
-      help: ["Krankenkasse", "Sozialpsychiatrie", "Suchtberatung", "Pflegestützpunkt"]
+      issues: ["krankheit","krank","psychische belastung","sucht","suchthilfe","pflege","krankenkasse","gesundheit"],
+      help: ["Krankenkasse","Sozialpsychiatrie","Suchtberatung","Pflegestützpunkt"],
+      folder: "Persönlichkeit"
     },
     finanzen: {
       label: "💰 Finanzen",
-      issues: ["Schulden", "ALG II", "Bürgergeld", "Steuern", "Kredite"],
-      help: ["Schuldnerberatung", "Jobcenter", "Finanzamt", "Verbraucherzentrale"]
+      issues: ["schulden","alg ii","bürgergeld","steuern","kredite","finanzen","geld"],
+      help: ["Schuldnerberatung","Jobcenter","Finanzamt","Verbraucherzentrale"],
+      folder: "Wohnen"
     },
     familie: {
-      label: "👨‍👩‍👧‍👦 Familie & Soziales",
-      issues: ["Kinderbetreuung", "Sorgerecht", "Gewalt", "Trennung", "Altersvorsorge"],
-      help: ["Jugendamt", "Familienberatung", "Hilfetelefon", "Sozialamt"]
+      label: "👨‍👩‍👧 Familie & Soziales",
+      issues: ["kinderbetreuung","sorgerecht","gewalt","trennung","altersvorsorge","familie","kinder"],
+      help: ["Jugendamt","Familienberatung","Hilfetelefon","Sozialamt"],
+      folder: "Persönlichkeit"
+    },
+    behoerden: {
+      label: "🏛️ Behörden",
+      issues: ["behörde","behörden","amt","antrag","formular","termin","ausländerbehörde","aufenthalt"],
+      help: ["Bürgeramt","Ausländerbehörde","Sozialamt","Bürgertelefon 115"],
+      folder: "Mobilität"
+    },
+    jobcenter: {
+      label: "🏛️ Jobcenter",
+      issues: ["jobcenter","alg i","alg ii","eingliederung","vermittlung"],
+      help: ["Jobcenter Terminvereinbarung","Arbeitsamt","Sozialberatung"],
+      folder: "Arbeit"
     }
   },
 
-  // ─── ÄMTER-ACHSE ────────────────────────────────────────────
+  // ─── ÄMTER ──────────────────────────────────────────────
   aemter: {
-    jobcenter: { label: "🏛️ Jobcenter", contact: "Terminvereinbarung", tasks: ["ALG II", "Bürgergeld", "Eingliederung"] },
-    arbeitsamt: { label: "🏛️ Arbeitsamt", contact: "Online-Portal", tasks: ["Arbeitslosengeld", "Weiterbildung", "Vermittlung"] },
-    wohnungsamt: { label: "🏛️ Wohnungsamt", contact: "Stadtverwaltung", tasks: ["Wohnberechtigungsschein", "Sozialwohnung"] },
-    jugendamt: { label: "🏛️ Jugendamt", contact: "Telefon + Beratung", tasks: ["Kinderbetreuung", "Sorgerecht", "Hilfe"] },
-    sozialamt: { label: "🏛️ Sozialamt", contact: "Persönlich oder Online", tasks: ["Sozialhilfe", "Grundsicherung"] },
-    gesundheitsamt: { label: "🏛️ Gesundheitsamt", contact: "Termin", tasks: ["Impfung", "Gesundheitszeugnis", "Hygiene"] },
-    finanzamt: { label: "🏛️ Finanzamt", contact: "Online + Telefon", tasks: ["Steuererklärung", "Steuer-ID", "Freistellungsauftrag"] },
-    auslaenderbehoerde: { label: "🏛️ Ausländerbehörde", contact: "Termin", tasks: ["Aufenthaltstitel", "Einbürgerung", "Fiktionsbescheinigung"] },
-    rentenversicherung: { label: "🏛️ Rentenversicherung", contact: "Online + Telefon", tasks: ["Rentenantrag", "Kontenklärung"] }
+    jobcenter:       { label:"🏛️ Jobcenter",       contact:"Terminvereinbarung",  tasks:["ALG II","Bürgergeld","Eingliederung"] },
+    arbeitsamt:      { label:"🏛️ Arbeitsamt",      contact:"Online-Portal",       tasks:["Arbeitslosengeld","Weiterbildung","Vermittlung"] },
+    wohnungsamt:     { label:"🏛️ Wohnungsamt",     contact:"Stadtverwaltung",     tasks:["Wohnberechtigungsschein","Sozialwohnung"] },
+    jugendamt:       { label:"🏛️ Jugendamt",       contact:"Telefon + Beratung",  tasks:["Kinderbetreuung","Sorgerecht","Hilfe"] },
+    sozialamt:       { label:"🏛️ Sozialamt",       contact:"Persönlich oder Online", tasks:["Sozialhilfe","Grundsicherung"] },
+    gesundheitsamt:  { label:"🏛️ Gesundheitsamt",  contact:"Termin",              tasks:["Impfung","Gesundheitszeugnis","Hygiene"] },
+    finanzamt:       { label:"🏛️ Finanzamt",       contact:"Online + Telefon",    tasks:["Steuererklärung","Steuer-ID","Freistellungsauftrag"] },
+    auslaenderbehoerde: { label:"🏛️ Ausländerbehörde", contact:"Termin",          tasks:["Aufenthaltstitel","Einbürgerung","Fiktionsbescheinigung"] },
+    rentenversicherung: { label:"🏛️ Rentenversicherung", contact:"Online + Telefon", tasks:["Rentenantrag","Kontenklärung"] },
+    krankenkasse:    { label:"🏥 Krankenkasse",    contact:"Online + Telefon",    tasks:["Leistungen","Krankmeldung","Anträge"] }
   },
 
-  // ─── PROBLEM-LÖSUNG ──────────────────────────────────────
-  solve(problem) {
-    const match = this.matchProblem(problem);
+  // Bereich → Ämter-Zuordnung
+  areaToAemter: {
+    wohnen:     ["wohnungsamt","sozialamt"],
+    arbeit:     ["jobcenter","arbeitsamt"],
+    gesundheit: ["gesundheitsamt","krankenkasse"],
+    finanzen:   ["finanzamt","jobcenter"],
+    familie:    ["jugendamt","sozialamt"],
+    behoerden:  ["auslaenderbehoerde","sozialamt","finanzamt"],
+    jobcenter:  ["jobcenter","arbeitsamt"]
+  },
+
+  // ─── SOLVE ──────────────────────────────────────────────
+  solve(problem, forcedArea) {
+    const match = forcedArea
+      ? this.makeMatch(forcedArea)
+      : this.matchProblem(problem);
+
     if (!match) return this.fallback(problem);
-    
+
     const solution = {
       area: match.area,
       issue: match.issue,
       help: match.help,
+      folder: this.areas[match.area]?.folder || "—",
       aemter: this.findAemter(match.area),
       steps: this.generateSteps(match),
       resources: this.findResources(match)
     };
-    
+
     this.solution = solution;
     this.focus = match.area;
     return solution;
   },
 
+  makeMatch(areaKey) {
+    const a = this.areas[areaKey];
+    if (!a) return null;
+    return { area: areaKey, issue: a.issues[0] || areaKey, help: a.help };
+  },
+
+  // Längster Treffer zuerst — spezifischer gewinnt
   matchProblem(input) {
-    const lower = input.toLowerCase();
+    const lower = (input || "").toLowerCase();
+    if (!lower) return null;
+    let best = null, bestLen = 0;
     for (const [key, area] of Object.entries(this.areas)) {
       for (const issue of area.issues) {
-        if (lower.includes(issue.toLowerCase())) {
-          return { area: key, issue, help: area.help };
+        if (lower.includes(issue) && issue.length > bestLen) {
+          best = { area: key, issue, help: area.help };
+          bestLen = issue.length;
         }
       }
     }
-    return null;
+    return best;
   },
 
   findAemter(areaKey) {
-    const mapping = {
-      wohnen: ["wohnungsamt", "sozialamt"],
-      arbeit: ["jobcenter", "arbeitsamt"],
-      gesundheit: ["gesundheitsamt", "krankenkasse"],
-      finanzen: ["finanzamt", "jobcenter"],
-      familie: ["jugendamt", "sozialamt"]
-    };
-    const keys = mapping[areaKey] || [];
-    return keys.map(k => this.aemter[k]).filter(Boolean);
+    const keys = this.areaToAemter[areaKey] || [];
+    return keys
+      .map(k => this.aemter[k] ? { key: k, ...this.aemter[k] } : null)
+      .filter(Boolean);
   },
 
   generateSteps(match) {
     return [
-      `1️⃣ Erste Anlaufstelle: ${match.help[0]} kontaktieren`,
-      `2️⃣ Unterlagen vorbereiten: Personalausweis, Nachweise`,
-      `3️⃣ Termin vereinbaren (Telefon oder Online)`,
-      `4️⃣ Beratung wahrnehmen und Lösung erarbeiten`,
-      `5️⃣ Falls nötig: Folge-Termin oder Antrag stellen`
+      `Erste Anlaufstelle: ${match.help[0]}`,
+      "Unterlagen vorbereiten: Personalausweis, Nachweise",
+      "Termin vereinbaren (Telefon oder Online)",
+      "Beratung wahrnehmen, Lösung erarbeiten",
+      "Bei Bedarf: Folge-Termin oder Antrag stellen"
     ];
   },
 
   findResources(match) {
     return {
-      hotline: "☎️ 0800 123 4567 (kostenlos)",
-      online: `🌐 www.${match.area}-hilfe.de`,
-      vorort: `📍 Nächste Beratungsstelle für ${match.area}`,
-      notfall: "⚠️ Bei akuter Krise: 112 oder 110"
+      online:  `www.${match.area}-hilfe.de`,
+      vorort:  `Nächste Beratungsstelle für ${match.area}`,
+      telefon: "Telefon 115 (Behörden-Hotline Deutschland, kostenlos)",
+      notfall: "Bei akuter Krise: 112 oder 110"
     };
   },
 
   fallback(input) {
     return {
-      status: "🔍 Unklar",
-      message: "Ich habe dein Problem nicht eindeutig erkannt. Bitte beschreibe es genauer.",
-      help: "Du kannst auch sagen: 'Ich brauche Hilfe bei Wohnen / Arbeit / Gesundheit / Finanzen / Familie'",
+      status: "🔍 unklar",
+      message: "Problem nicht eindeutig erkannt. Bitte genauer beschreiben.",
+      help: "Sage z.B. 'wohnung', 'arbeit', 'gesundheit', 'schulden', 'familie', 'behörden'",
       aemter: [],
-      steps: ["1️⃣ Problem klar beschreiben", "2️⃣ Bereich wählen", "3️⃣ Hilfe holen"]
+      steps: [
+        "Problem klar beschreiben",
+        "Bereich wählen",
+        "Hilfe holen"
+      ]
     };
   },
 
-  // ─── KERNEL-INTERFACE (7SENSE kompatibel) ──────────────
+  // ─── SENSE · Verhandlung ────────────────────────────────
   sense() {
     const states = {
       ghost: "Problem nicht erkannt",
-      help: "Hilfe wird benötigt",
+      help:  "Hilfe wird benötigt",
       error: "Problem dringend",
-      miss: "Information fehlt",
-      fit: "Lösung in Arbeit",
-      fin: "Problem gelöst",
-      rdy: "Bereit für nächste Hilfe",
-      bioldung: "Lösung wird aufgebaut"
+      miss:  "Information fehlt",
+      fit:   "Lösung in Arbeit",
+      fin:   "Problem gelöst",
+      rdy:   "Bereit für nächste Hilfe"
     };
-    return {
-      state: this.solution ? "fit" : "rdy",
-      description: states[this.solution ? "fit" : "rdy"] || "Bereit"
-    };
+    const key = this.solution ? "fit" : "rdy";
+    return { state: key, description: states[key] };
+  },
+
+  // ─── VERHANDLUNG · Einzelentscheidung ──────────────────
+  // Nutzer entscheidet, ob er's annimmt. Kein Zwang.
+  negotiate(problem, answer) {
+    const sol = this.solve(problem);
+
+    switch (answer) {
+      case "ja":
+        // Nutzer nimmt die Lösung an
+        return { ok: true, action: "angenommen", solution: sol };
+
+      case "nein":
+        // Nutzer lehnt ab — nicht nachbohren
+        this.solution = null;
+        return { ok: true, action: "abgelehnt", message: "Ok. Nichts weiter." };
+
+      case "später":
+        return { ok: true, action: "später", message: "Ok. In 30 min nochmal." };
+
+      case "heute nicht":
+        return { ok: true, action: "heute-nicht", message: "Ok. Ruhe bis morgen." };
+
+      case "nie":
+        return { ok: true, action: "nie", message: "Verstanden. Nie mehr." };
+
+      default:
+        // Unklar → zeig was drin ist, frag nochmal
+        return { ok: false, action: "frage", solution: sol };
+    }
   }
 };
 
-// ─── EXPORT (für deine Engine) ─────────────────────────────
+// ─── EXPORT ─────────────────────────────────────────────
 export { COACH };
